@@ -4,3 +4,10 @@ users:
     groups: sudo
     shell: /bin/bash
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh_authorized_keys:
+    - ${ssh_key}
+write_files:
+  - path: /home/centos/.ssh/authorized_keys
+    permissions: '0600'
+  - path: /home/centos/.ssh
+    permissions: '0700'
