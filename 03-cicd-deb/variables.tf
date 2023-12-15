@@ -36,17 +36,17 @@ variable "file_ssh_public_key" {
   default = "~/.ssh/id_rsa.pub"
 }
 
-variable "image_id" {
-  type        = string
-  default     = "fd8gvgtf1t3sbtt4opo6"
-  description = "Centos-7"
-}
-
 # variable "image_id" {
 #   type        = string
-#   default     = "fd8e8mremu2mdi1p5kmi"
-#   description = "ubuntu-2204-lts"
+#   default     = "fd8gvgtf1t3sbtt4opo6"
+#   description = "Centos-7"
 # }
+
+variable "image_id" {
+  type        = string
+  default     = "fd8e8mremu2mdi1p5kmi"
+  description = "ubuntu-2204-lts"
+}
 
 variable "vm_platform_id" {
   type        = string
@@ -55,7 +55,7 @@ variable "vm_platform_id" {
 
 variable "ssh_login" {
   type        = string
-  default     = "centos"
+  default     = "ubuntu"
 }
 
 variable "count_vm" {
