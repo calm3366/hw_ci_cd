@@ -1,0 +1,17 @@
+node("linux"){
+    stage("Git checkout"){
+        git credentialsId: 'e3d01916-a381-4932-942d-6cd4ea97d275', url: 'git@github.com:calm3366/example-playbook-jenkins.git'
+    }
+    stage("Sample define secret_check"){
+        prod_run=true
+    }
+    stage("Run playbook"){
+        if (prod_run==false){
+            sh 'ansible-playbook site.yml -i inventory/prod.yml --check --diff'
+        }
+        else{
+            sh 'ansible-playbook site.yml -i inventory/prod.yml'
+        }
+        
+    }
+}

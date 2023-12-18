@@ -1,34 +1,27 @@
-resource "yandex_vpc_network" "develop" {
+resource "yandex_vpc_network" "develop2" {
   name = var.vpc_name
 }
 
-resource "yandex_vpc_subnet" "develop" {
+resource "yandex_vpc_subnet" "develop2" {
   name           = var.vpc_name
   zone           = var.default_zone
-  network_id     = yandex_vpc_network.develop.id
+  network_id     = yandex_vpc_network.develop2.id
   v4_cidr_blocks = var.default_cidr
 }
 
-resource "yandex_vpc_security_group" "example_firewall" {
-  # Создание правила брандмауэра для открытия порта 8080
-  name        = "example-firewall"
-  network_id  = yandex_vpc_network.develop.id
-  
+resource "yandex_vpc_security_group" "allow-8080" {
+  # Create a security group and allow incoming traffic on port 8080
+  name        = "allow-8080"
+  description = "Allow incoming traffic on port 8080"
+  network_id = yandex_vpc_network.develop2.id
 
   ingress {
-    protocol       = "TCP"
-    description    = "rule1 description"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port           = 8080
-  }
-  egress {
-    protocol       = "TCP"
-    description    = "rule2 description"
-    v4_cidr_blocks = ["0.0.0.0/0"]
-    port           = 8080
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "ANY"
+    v4_cidr_blocks = ["0.0.0.0/0"]  # Adjust this to your specific IP range for security
   }
 }
-
 
 data "yandex_compute_image" "image_os" {
   image_id = var.image_id
@@ -52,7 +45,7 @@ resource "yandex_compute_instance" "vm" {
     preemptible = true
   }
   network_interface {
-    subnet_id = yandex_vpc_subnet.develop.id
+    subnet_id = yandex_vpc_subnet.develop2.id
     nat       = true
   }
 

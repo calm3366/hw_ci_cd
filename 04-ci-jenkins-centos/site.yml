@@ -1,10 +1,6 @@
 ---
 - name: Preapre all hosts
   hosts: all
-  vars_files:
-    - "ter_vars/ssh_login.yml"
-    - "ter_vars/vm_01.yml"  
-    - "ter_vars/vm_02.yml"  
   tasks:
     - name: Create group
       become: true
@@ -25,9 +21,6 @@
 
 - name: Get Jenkins master installed
   hosts: jenkins_masters
-  vars_files:
-    - "ter_vars/ssh_login.yml"
-    - "ter_vars/vm_01.yml"
   tasks:
     - name: Get repo Jenkins
       become: true
@@ -72,9 +65,6 @@
       when: jenkins_installed is changed
 - name: Prepare jenkins agent
   hosts: jenkins_agents
-  vars_files:
-    - "ter_vars/ssh_login.yml"
-    - "ter_vars/vm_02.yml"
   become: true
   become_user: "{{ jenkins_user_name }}"
   tasks:

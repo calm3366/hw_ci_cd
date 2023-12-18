@@ -9,11 +9,11 @@
     <repository>
       <id>my-repo</id>
       <name>maven-public</name>
-      <url>http://158.160.123.39:8081/repository/maven-public/</url>
+      <url>http://158.160.98.71:8081/repository/maven-public/</url>
     </repository>
   </repositories>
 
-  <!-- <dependencies>
+  <dependencies>
     <dependency>
       <groupId>netology</groupId>
       <artifactId>java</artifactId>
@@ -21,5 +21,5 @@
       <classifier>distrib</classifier>
       <type>tar.gz</type>
     </dependency>
-  </dependencies> -->
+  </dependencies>
 </project>
