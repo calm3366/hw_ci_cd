@@ -1,0 +1,52 @@
+image: docker:17.09.0-ce
+services:
+  - docker:dind
+before_script:
+  - apk add --update py-pip &&
+      pip install docker-compose
+stages:
+  - test
+  - build
+  - deploy
+  - stage
+unittests:
+  stage: test
+  script:
+    - cd web
+    - pip install -q -r requirements.txt
+    - nose2 -v --with-coverage
+  tags:
+    - docker
+docker-build:
+  stage: build
+  script:
+  - docker login -u root -p $HUB_REGISTRY_PASSWORD https://gitlab.example.ru:4567/
+  - docker build -t gitlab.example.ru:4567/root/flask-docker-swarm/nginx:$CI_COMMIT_SHA ./nginx
+  - docker push gitlab.example.ru:4567/root/flask-docker-swarm/nginx:$CI_COMMIT_SHA
+  - docker build -t gitlab.example.ru:4567/root/flask-docker-swarm/web:$CI_COMMIT_SHA ./web
+  - docker push gitlab.example.ru:4567/root/flask-docker-swarm/web:$CI_COMMIT_SHA
+  - docker build -t gitlab.example.ru:4567/root/flask-docker-swarm/redis:latest ./redis
+  - docker push gitlab.example.ru:4567/root/flask-docker-swarm/redis:latest
+  tags:
+    - docker
+deploy-to-swarm:
+  stage: deploy
+  variables:
+    DOCKER_HOST: tcp://{manager_ip_address}:2376
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "/certs"
+  script:
+    - mkdir -p $DOCKER_CERT_PATH
+    - echo "$TLSCACERT" > $DOCKER_CERT_PATH/ca.pem
+    - echo "$TLSCERT" > $DOCKER_CERT_PATH/cert.pem
+    - echo "$TLSKEY" > $DOCKER_CERT_PATH/key.pem
+    - docker login -u root -p $HUB_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker stack deploy -c docker-compose.yml env_name --with-registry-auth
+    - rm -rf $DOCKER_CERT_PATH
+  environment:
+    name: master
+    url:  http://{manager_ip_address}
+  only:
+    - master
+  tags:
+    - docker
